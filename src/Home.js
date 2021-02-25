@@ -13,7 +13,7 @@ function Home() {
         />
 
         <div className="home__row">
-        <Product
+          <Product
             id="12321341"
             title="The Lean Startup: How Constant Innovation Creates Radically Successful Businesses Paperback"
             price={11.96}
@@ -30,7 +30,7 @@ function Home() {
         </div>
 
         <div className="home__row">
-        <Product
+          <Product
             id="4903850"
             title="Samsung LC49RG90SSUXEN 49' Curved LED Gaming Monitor"
             price={199.99}
@@ -54,7 +54,7 @@ function Home() {
         </div>
 
         <div className="home__row">
-        <Product
+          <Product
             id="90829332"
             title="Samsung LC49RG90SSUXEN 49' Curved LED Gaming Monitor - Super Ultra Wide Dual WQHD 5120 x 1440"
             price={1094.98}
