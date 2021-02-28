@@ -8,6 +8,12 @@ import Checkout from "./Checkout";
 import Login from "./Login";
 import { auth } from "./firebase";
 import { useStateValue } from "./StateProvider";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
+const promise = loadStripe(
+  "pk_test_51IPiHEGeZc4pvph85MNs9SgszxXc2emk4ON0fNfrOAeQdcmutTAs5g6YBwwc6fO9wlhSl2EtLEeRpHqLabQLhcwJ000CPhZtHV"
+);
 
 function App() {
   //doubt about USEEFFECT
@@ -39,7 +45,7 @@ function App() {
     //following the BEM convention
     <Router>
       <div className="App">
-        <switch>
+        <Switch>
           {/* rectify the "/" issue with "/home" ##DOUBT */}
           <Route path="/checkout">
             <Header />
@@ -50,13 +56,15 @@ function App() {
           </Route>
           <Route path="/payment">
             <Header />
-            <Payment/>
+            <Elements stripe={promise}>
+              <Payment />
+            </Elements>
           </Route>
           <Route path="/home">
             <Header />
             <Home />
           </Route>
-        </switch>
+        </Switch>
       </div>
     </Router>
   );
