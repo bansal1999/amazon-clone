@@ -6,6 +6,7 @@ import Home from "./Home";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Checkout from "./Checkout";
 import Login from "./Login";
+import Orders from "./Orders";
 import { auth } from "./firebase";
 import { useStateValue } from "./StateProvider";
 import { loadStripe } from "@stripe/stripe-js";
@@ -47,6 +48,10 @@ function App() {
       <div className="App">
         <Switch>
           {/* rectify the "/" issue with "/home" ##DOUBT */}
+          <Route path="/orders">
+            <Orders />
+            <Header />
+          </Route>
           <Route path="/checkout">
             <Header />
             <Checkout />

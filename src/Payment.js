@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Payment.css";
 import { useStateValue } from "./StateProvider";
 import CheckoutProduct from "./CheckoutProduct";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import CurrencyFormat from "react-currency-format";
 import { getBasketTotal } from "./reducer";
+import axios from "./axios";
+import { db } from "./firebase";
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
+  const history = useHistory();
 
   const stripe = useStripe();
   const elements = useElements();
@@ -21,24 +24,55 @@ function Payment() {
 
   useEffect(() => {
     //generate the special stripe secret which allows us to charge a customer
-      const getClientSecret = async () = {
-        // DOUBT about async function
-        // DOUBT about axios 
+    const getClientSecret = async () => {
+      // DOUBT about async function
+      // DOUBT about axios
+      const response = await axios({
+        method: "post",
+        // stripe expects the total in a currencies subunits
+        url: `/payments/create?total=${getBasketTotal(basket) * 100}`
+      });
+      setClientSecret(response.data.clientSecret);
+    };
 
-          const response = await axios
-      }
+    getClientSecret();
+  }, [basket]);
 
-      getClientSecret();
-  }, [basket])
+  console.log("The secret is >>>>>>>>>", clientSecret);
 
   const handleSubmit = async (event) => {
     // implements the stripe functions
     event.preventDefault();
     setProcessing(true);
 
+    const payload = await stripe
+      .confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        },
+      })
+      .then(({ paymentIntent }) => {
+        // paymentIntent == payment Confirmation
+        db.collection("users")
+          .doc(user?.id)
+          .collection("orders")
+          .doc(paymentIntent.id)
+          .set({
+            basket: basket,
+            amount: paymentIntent.amount,
+            created: paymentIntent.created,
+          });
 
-    // cosnt payload = await stripe 
+        setSucceded(true);
+        setError(null);
+        setProcessing(false);
 
+        dispatch({
+          type: "EMPTY_BASKET",
+        });
+
+        history.replace("/orders");
+      });
   };
 
   const handleChange = (event) => {
